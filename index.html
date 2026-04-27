@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Comparador de Tarifas Móviles IA</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="background-globes">
+        <div class="globe globe-1"></div>
+        <div class="globe globe-2"></div>
+    </div>
+    <header class="glass-header">
+        <div class="logo">
+            <i class="fa-solid fa-bolt"></i> Switch<span>ly</span>
+        </div>
+
+        <div class="header-actions" style="display: flex; gap: 15px; align-items: center;">
+            <select id="lang-switch" class="lang-switch">
+                <option value="es">🇪🇸 ES</option>
+                <option value="en">🇬🇧 EN</option>
+            </select>
+            <button class="login-btn" data-i18n="nav_login">Acceder</button>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero-section" style="display:flex; align-items:center; justify-content:space-between; text-align:left; gap:40px; flex-wrap:wrap;">
+            <div style="flex: 1; min-width: 300px;">
+                <h1 style="text-align: left; margin-bottom: 20px;" data-i18n="hero_title">Encuentra la <span>mejor tarifa móvil</span> con IA</h1>
+                <p style="text-align: left; margin: 0; max-width: none;" data-i18n="hero_subtitle">Nuestra inteligencia artificial analiza más de 500 ofertas para encontrar la que mejor se adapta a ti.</p>
+            </div>
+            <div style="flex: 1; min-width: 300px; display:flex; justify-content:center;">
+                <img src="hero.png" alt="AI Network" style="max-width: 100%; border-radius: 20px; filter: drop-shadow(0 0 30px rgba(79, 172, 254, 0.4)); animation: drift 10s infinite alternate ease-in-out;">
+            </div>
+        </section>
+
+        <section id="personalized-dashboard" style="display: none; padding: 25px; background: var(--glass-bg); backdrop-filter: blur(10px); border-radius: 16px; margin-bottom: 2rem; border: 1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+            <div>
+                <h2 style="margin: 0; font-size: 1.5rem; text-shadow: 0 0 10px rgba(255,255,255,0.2);" data-i18n="dash_title">Panel Personalizado</h2>
+                <p style="margin: 5px 0 0; color: var(--text-secondary); font-size: 0.9rem;" data-i18n="dash_subtitle">Recomendación inteligente según tus preferencias</p>
+            </div>
+
+            <!-- Datos de Perfil -->
+            <div id="user-profile-summary" style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <div class="profile-card" style="padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid var(--glass-border);">
+                    <div style="color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase;" data-i18n="dash_current_plan">Mi Tarifa Actual</div>
+                    <div id="profile-current-plan" style="font-weight: bold; font-size: 1.1rem; margin-top: 5px;">-</div>
+                    <div id="profile-current-company" style="font-size: 0.9rem; color: var(--accent-primary);"></div>
+                </div>
+                <div class="profile-card" style="padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid var(--glass-border);">
+                    <div style="color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase;" data-i18n="dash_monthly_payment">Pago Mensual</div>
+                    <div id="profile-current-price" style="font-weight: bold; font-size: 1.2rem; margin-top: 5px; color: #ff6b6b;">- €</div>
+                </div>
+            </div>
+
+            <!-- Tabla Mis Pedidos -->
+            <div id="user-orders-section" style="margin-top: 25px; display: none;">
+                <h3 style="font-size: 1.2rem; margin-bottom: 15px; color: var(--text-primary);"><i class="fa-solid fa-list-check"></i> <span data-i18n="dash_orders">Mis pedidos de cambio</span></h3>
+                <div id="orders-list" style="background: rgba(0,0,0,0.2); border-radius: 10px; overflow: hidden; border: 1px solid var(--glass-border);">
+                    <!-- Pedidos dinámicos -->
+                </div>
+            </div>
+
+            <button id="btn-smart-recommend" class="ai-search-btn" style="width: 100%; margin-top: 25px; font-size: 1.1rem; padding: 15px; background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));"><i class="fa-solid fa-wand-magic-sparkles"></i> <span data-i18n="dash_ai_btn">✨ Analizar mi perfil y recomendarme</span></button>
+            <div id="smart-recommendation-result" style="display: none; margin-top: 20px; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 12px; font-size: 0.95rem; line-height: 1.6; border: 1px solid var(--accent-primary);"></div>
+            <div class="cards-grid" id="smart-results-grid" style="margin-top: 20px;"></div>
+        </section>
+
+        <section class="filters-glass">
+            <div class="filter-group">
+                <label><i class="fa-solid fa-wifi"></i> <span data-i18n="filter_data">Datos mínimos</span></label>
+                <select id="data-filter">
+                    <option value="0" data-i18n="filter_any">Cualquiera</option>
+                    <option value="10" data-i18n="filter_10gb">Más de 10 GB</option>
+                    <option value="50" data-i18n="filter_50gb">Más de 50 GB</option>
+                    <option value="100" data-i18n="filter_100gb">Más de 100 GB</option>
+                    <option value="1000" data-i18n="filter_unlimited">Ilimitados</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label><i class="fa-solid fa-euro-sign"></i> <span data-i18n="filter_price">Precio máximo</span></label>
+                <input type="range" id="price-filter" min="5" max="50" value="30" oninput="document.getElementById('price-val').innerText=this.value+' €'">
+                <span id="price-val" class="range-val">30 €</span>
+            </div>
+            <div class="filter-group">
+                <label><i class="fa-solid fa-phone"></i> <span data-i18n="filter_calls">Llamadas</span></label>
+                <select id="calls-filter">
+                    <option value="all" data-i18n="filter_any">Cualquiera</option>
+                    <option value="unlimited" data-i18n="filter_unlimited">Ilimitadas</option>
+                </select>
+            </div>
+            <button class="ai-search-btn" id="search-btn"><i class="fa-solid fa-wand-magic-sparkles"></i> <span data-i18n="btn_search">Buscar</span></button>
+        </section>
+
+        <section class="results-section">
+            <div class="results-header">
+                <h2 data-i18n="results_title">Resultados Recomendados</h2>
+                <div class="sort-options">
+                    <label data-i18n="sort_label">Ordenar por:</label>
+                    <select id="sort-filter">
+                        <option value="recommended" data-i18n="sort_recommended">Recomendación IA</option>
+                        <option value="price-asc" data-i18n="sort_price">Precio: Más barato</option>
+                        <option value="data-desc" data-i18n="sort_data">Datos: Mayor cantidad</option>
+                    </select>
+                </div>
+            </div>
+            <div class="cards-grid" id="results-grid">
+                <!-- Cards will be dynamically inserted here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Auth Modal -->
+    <div class="modal-overlay" id="auth-modal">
+        <div class="auth-modal">
+            <button class="close-modal" id="close-modal-btn"><i class="fa-solid fa-xmark"></i></button>
+            <div class="auth-header" id="auth-header-block">
+                <h2 data-i18n="modal_title" id="auth-title">Crear Cuenta</h2>
+                <p data-i18n="modal_subtitle" id="auth-subtitle">Únete para guardar tus tarifas revisadas</p>
+            </div>
+            
+            <!-- Success Message Verification Window -->
+            <div id="auth-success-message" style="display: none; text-align: center; padding: 20px 0;">
+                <i class="fa-regular fa-envelope" style="font-size: 3.5rem; color: var(--accent-primary); margin-bottom: 20px; filter: drop-shadow(0 0 15px rgba(138,43,226,0.3));"></i>
+                <h3 data-i18n="modal_success_title" style="margin-bottom: 12px;">¡Revisa tu correo!</h3>
+                <p data-i18n="modal_success_desc" style="color: var(--text-secondary); line-height: 1.5; font-size: 0.95rem;">Hemos enviado un enlace mágico a tu bandeja de entrada.<br>Haz clic en él para verificar y activar tu cuenta.</p>
+                <button type="button" class="ai-search-btn" id="finish-btn" style="width: 100%; margin-top: 25px;" data-i18n="modal_success_btn">Entendido</button>
+            </div>
+
+            <form class="auth-form" id="auth-form">
+                <div class="input-group">
+                    <label><i class="fa-solid fa-envelope"></i> <span data-i18n="modal_user">Email</span></label>
+                    <input type="email" id="input-username" placeholder="Tu correo electrónico" required>
+                </div>
+                <div class="input-group">
+                    <label><i class="fa-solid fa-lock"></i> <span data-i18n="modal_password">Contraseña</span></label>
+                    <input type="password" id="input-password" placeholder="Tu contraseña" required>
+                </div>
+                
+                <button type="submit" class="ai-search-btn" id="auth-submit-btn" style="width: 100%; margin-top: 10px;" data-i18n="modal_register">Registrarse</button>
+            </form>
+            <div class="auth-footer" id="auth-footer-block">
+                <p><span data-i18n="modal_has_account" id="auth-footer-text">¿Ya tienes cuenta?</span> <a href="#" id="auth-toggle-btn" style="color:var(--accent-secondary)" data-i18n="modal_login">Inicia sesión</a></p>
+            </div>
+        </div>
+    </div>
+    <!-- Complete Profile Modal -->
+    <div class="modal-overlay" id="profile-modal">
+        <div class="auth-modal">
+            <button class="close-modal" id="close-profile-modal-btn"><i class="fa-solid fa-xmark"></i></button>
+            <div class="auth-header">
+                <h2 data-i18n="profile_title">Completa tu perfil</h2>
+                <p data-i18n="profile_subtitle">Necesitamos estos datos para tramitar la portabilidad y firmar el mandato SEPA.</p>
+            </div>
+            <form class="auth-form" id="profile-form" style="display: flex; flex-direction: column; gap: 20px;">
+                <div id="profile-legal-section" style="display: flex; flex-direction: column; gap: 20px;">
+                    <div class="input-group">
+                        <label><i class="fa-solid fa-user"></i> <span data-i18n="form_fullname">Nombre Completo</span></label>
+                        <input type="text" id="profile-fullname" data-i18n-ph="form_fullname_ph" placeholder="Nombre completo">
+                    </div>
+                    <div class="input-group">
+                        <label><i class="fa-solid fa-id-card"></i> <span data-i18n="form_dni">DNI / NIE</span></label>
+                        <input type="text" id="profile-dni" placeholder="12345678A" required>
+                    </div>
+                    <div class="input-group">
+                        <label><i class="fa-solid fa-mobile-screen"></i> <span data-i18n="form_phone">Teléfono a portar</span></label>
+                        <input type="text" id="profile-phone" data-i18n-ph="form_phone_ph" placeholder="600123456" required>
+                    </div>
+                    <div class="input-group">
+                        <label><i class="fa-solid fa-map-location-dot"></i> <span data-i18n="form_address">Dirección de envío SIM</span></label>
+                        <input type="text" id="profile-address" data-i18n-ph="form_address_ph" placeholder="Calle Ejemplo 1, Madrid">
+                    </div>
+                    <div class="input-group">
+                        <label><i class="fa-solid fa-building-columns"></i> <span data-i18n="form_iban">IBAN Bancario</span></label>
+                        <input type="text" id="profile-iban" data-i18n-ph="form_iban_ph" placeholder="ESXX XXXX XXXX XXXX XXXX" required>
+                    </div>
+
+                    <hr style="border: 0; height: 1px; background: var(--glass-border); margin: 10px 0;">
+                </div>
+
+                <div class="input-group">
+                    <label><i class="fa-solid fa-tower-broadcast"></i> <span data-i18n="form_company">Compañía actual</span></label>
+                    <input type="text" id="profile-current-company" data-i18n-ph="form_company_ph" placeholder="Ej. Vodafone">
+                </div>
+                <div class="input-group">
+                    <label><i class="fa-solid fa-money-bill-wave"></i> <span data-i18n="form_price">Lo que pagas ahora al mes (€)</span></label>
+                    <input type="text" id="profile-current-price" data-i18n-ph="form_price_ph" placeholder="Ej. 45.50">
+                </div>
+                <div class="input-group">
+                    <label><i class="fa-solid fa-file-contract"></i> <span data-i18n="form_plan">Tu tarifa actual (resumen)</span></label>
+                    <input type="text" id="profile-current-plan" data-i18n-ph="form_plan_ph" placeholder="Ej. 50GB + llamadas">
+                </div>
+                <div class="input-group">
+                    <label><i class="fa-solid fa-bullseye"></i> <span data-i18n="form_desired">Características deseadas</span></label>
+                    <input type="text" id="profile-desired-features" data-i18n-ph="form_desired_ph" placeholder="Ej. Datos ilimitados y roaming">
+                </div>
+
+                <button type="submit" class="ai-search-btn" id="profile-submit-btn" style="width: 100%; margin-top: 10px;" data-i18n="profile_save">Guardar y continuar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Switch Plan Modal -->
+    <div class="modal-overlay" id="switch-modal">
+        <div class="auth-modal" style="text-align: center;">
+            <div class="auth-header" id="switch-header">
+                <h2 data-i18n="sw_title" style="margin-bottom: 20px;">Cambiando tu tarifa...</h2>
+                <div class="processing-spinner"></div>
+            </div>
+            
+            <div class="switch-steps" id="switch-steps">
+                <div class="switch-step pending" id="step1">
+                    <div class="step-icon"><i class="fa-solid fa-id-card"></i></div>
+                    <p data-i18n="sw_step1">Verificando tus datos personales...</p>
+                </div>
+                <div class="switch-step pending" id="step2">
+                    <div class="step-icon"><i class="fa-solid fa-tower-cell"></i></div>
+                    <p data-i18n="sw_step2">Solicitando portabilidad del número...</p>
+                </div>
+                <div class="switch-step pending" id="step3">
+                    <div class="step-icon"><i class="fa-solid fa-sim-card"></i></div>
+                    <p data-i18n="sw_step3">Activando tu nueva tarifa...</p>
+                </div>
+            </div>
+
+            <div id="switch-success" style="display: none; padding: 20px 0;">
+                <i class="fa-solid fa-circle-check" style="font-size: 4rem; color: #10b981; margin-bottom: 20px; filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.4));"></i>
+                <h3 data-i18n="sw_success" style="margin-bottom: 12px; font-size: 1.5rem;">¡Tarifa cambiada con éxito!</h3>
+                <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 10px; margin-bottom: 15px;">
+                    <p style="margin:0; font-size: 0.9rem;"><span data-i18n="sw_order_label">Pedido</span> <strong id="success-order-id">#000</strong></p>
+                </div>
+                <p data-i18n="sw_success_desc" style="color: var(--text-secondary); line-height: 1.5;">A partir de este momento disfrutas de tu nueva tarifa automáticamente. Hemos enviado un correo con todos los detalles.</p>
+                <button type="button" class="ai-search-btn" id="close-switch-btn" style="width: 100%; margin-top: 25px;" data-i18n="sw_close">Cerrar y ver mis pedidos</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
